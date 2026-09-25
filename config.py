@@ -2,7 +2,7 @@ import os
 
 # ============ LLM ============
 # Работаем через Ollama — локально и бесплатно
-LLM_MODEL = "qwen2.5:7b"
+LLM_MODEL = "qwen2.5:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # ============ Пути к данным ============
