@@ -1,4 +1,4 @@
-Вакансия 08: Крупная ИТ-компания
+Вакансия 08: Аналитик по электронному документообороту (ЭДО)
 company: Крупная ИТ-компания
 url: [[<ссылка на hh.ru>](https://hh.ru/vacancy/137796391?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)](https://hh.ru/vacancy/137796391?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)
 type: sa 
