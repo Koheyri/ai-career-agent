@@ -43,12 +43,12 @@ gaps — квалификационные пробелы ВНЕ списка cri
 {"critical_requirements": [{"requirement": "...", "met": true, "evidence": "цитата из контекста"}], "critical_total": 5, "critical_met": 3, "match_score": 60, "gaps": [{"requirement": "...", "severity": "критично или желательно"}], "risks": {"experience": "...", "skills": "...", "education": "..."}, "summary": "вывод в 2-3 предложениях"}"""
 
 
-def ask_ollama(prompt: str) -> str:
+def ask_ollama(prompt: str, temperature: float = 0.1) -> str:
     payload = {
         "model": LLM_MODEL,
         "prompt": prompt,
         "stream": False,
-        "options": {"num_ctx": 4096, "temperature": 0.1, "num_predict": 2048},
+        "options": {"num_ctx": 4096, "temperature": 0.1, "num_predict": 3072},
     }
     req = urllib.request.Request(
         f"{OLLAMA_URL}/api/generate",
@@ -94,12 +94,16 @@ def analyze(vacancy_text: str, kb: KnowledgeBase, top_k: int = 6) -> dict:
         .replace("{CANDIDATE_CHUNKS}", chunks_text)
         .replace("{VACANCY_TEXT}", vacancy_text[:2500])
     )
-    raw = ask_ollama(prompt)
+        raw = ask_ollama(prompt)
     try:
         return recalc_score(extract_json(raw))
     except Exception:
-        # Модель вернула мусор — сохраняем сырой ответ для диагностики
-        return {"_parse_error": True, "_raw": raw[:1500]}
+        # Повторная попытка: свежая генерация с большей температурой
+        raw = ask_ollama(prompt, temperature=0.5)
+        try:
+            return recalc_score(extract_json(raw))
+        except Exception:
+            return {"_parse_error": True, "_raw": raw[:1500]}
 
 
 if __name__ == "__main__":
