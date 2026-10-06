@@ -1,7 +1,7 @@
 Вакансия 03:Аналитик 1С
 company:ООО ВиКонт
 url:[<ссылка на hh.ru>](https://hh.ru/vacancy/137493911?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)
-type:sa 
+type:negative 
 date:30.09.2026
 Текст вакансии:
 Аналитик 1С
