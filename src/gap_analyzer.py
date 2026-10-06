@@ -16,8 +16,6 @@ from vacancy_loader import load_vacancies
 OLLAMA_URL = "http://localhost:11434"
 LLM_MODEL = "qwen2.5:3b"
 
-# Плейсхолдеры подставляются через replace() — фигурные скобки
-# в JSON-примере не мешают, шаблон можно править как в Confluence
 PROMPT_TEMPLATE = """Ты — карьерный аналитик. Сравни профиль кандидата с требованиями вакансии.
 
 КОНТЕКСТ КАНДИДАТА:
@@ -27,7 +25,7 @@ PROMPT_TEMPLATE = """Ты — карьерный аналитик. Сравни 
 {VACANCY_TEXT}
 
 Алгоритм — выполняй строго по шагам:
-Шаг 1. Выпиши до 5 КЛЮЧЕВЫХ требований вакансии — без которых работу не выполнить. Строки "будет плюсом" Включай специфичные требования (конкретные системы, инструменты, отраслевой опыт), а не только общие навыки вроде Excel и коммуникации., пожелания по годам опыта и отрасли — НЕ ключевые, если не помечены словом "обязательно".
+Шаг 1. Выпиши до 5 КЛЮЧЕВЫХ требований вакансии — без которых работу не выполнить. Строки "будет плюсом", пожелания по годам опыта и отрасли — НЕ ключевые, если не помечены словом "обязательно". Включай специфичные требования (конкретные системы, инструменты, отраслевой опыт), а не только общие навыки вроде Excel и коммуникации.
 Шаг 2. По каждому требованию ищи в контексте кандидата прямое подтверждение. Есть — met=true и цитата до 15 слов. Нет — met=false, evidence="".
 Шаг 3. critical_total = сколько выписал, critical_met = сколько met=true.
 
@@ -40,7 +38,8 @@ PROMPT_TEMPLATE = """Ты — карьерный аналитик. Сравни 
 gaps — квалификационные пробелы ВНЕ списка critical. Условия работы (график, локация, зарплата, размер команды) — не gaps.
 
 Формат ответа — только JSON, без пояснений до и после:
-{"critical_requirements": [{"requirement": "...", "met": true, "evidence": "цитата из контекста"}], "critical_total": 5, "critical_met": 3, "match_score": 60, "gaps": [{"requirement": "...", "severity": "критично или желательно"}], "risks": {"experience": "...", "skills": "...", "education": "..."}, "summary": "вывод в 2-3 предложениях"}"""
+{"critical_requirements": [{"requirement": "...", "met": true, "evidence": "цитата из контекста"}], "critical_total": 5, "critical_met": 3, "match_score": 60, "gaps": [{"requirement": "...", "severity": "критично или желательно"}], "risks": {"experience": "...", "skills": "...", "education": "..."}, "summary": "вывод в 2-3 предложениях"}
+"""
 
 
 def ask_ollama(prompt: str, temperature: float = 0.1) -> str:
@@ -48,7 +47,7 @@ def ask_ollama(prompt: str, temperature: float = 0.1) -> str:
         "model": LLM_MODEL,
         "prompt": prompt,
         "stream": False,
-        "options": {"num_ctx": 4096, "temperature": 0.1, "num_predict": 3072},
+        "options": {"num_ctx": 4096, "temperature": temperature, "num_predict": 3072},
     }
     req = urllib.request.Request(
         f"{OLLAMA_URL}/api/generate",
@@ -76,7 +75,8 @@ def extract_json(text: str) -> dict:
             if depth == 0:
                 return json.loads(text[start : i + 1])
     raise ValueError("JSON не закрыт")
-    
+
+
 def recalc_score(report: dict) -> dict:
     """Score считает Python по меткам модели, а не доверяет её числу."""
     reqs = report.get("critical_requirements", [])
@@ -94,11 +94,12 @@ def analyze(vacancy_text: str, kb: KnowledgeBase, top_k: int = 6) -> dict:
         .replace("{CANDIDATE_CHUNKS}", chunks_text)
         .replace("{VACANCY_TEXT}", vacancy_text[:2500])
     )
-        raw = ask_ollama(prompt)
+    raw = ask_ollama(prompt)
     try:
         return recalc_score(extract_json(raw))
     except Exception:
         # Повторная попытка: свежая генерация с большей температурой
+        # (зацикливание модели случайно, повтор обычно чистый)
         raw = ask_ollama(prompt, temperature=0.5)
         try:
             return recalc_score(extract_json(raw))
@@ -109,12 +110,12 @@ def analyze(vacancy_text: str, kb: KnowledgeBase, top_k: int = 6) -> dict:
 if __name__ == "__main__":
     kb = KnowledgeBase().build()
     vacs = load_vacancies()
-    vac = vacs[0]  # vacancy_01 — бизнес-аналитик, ожидаем высокий match
+    vac = vacs[0]
 
-    expect = "низкий" if vac["type"] == "negative" else "высокий"
+    expect = "низкий" if vac["type"] in ("negative", "stretch") else "высокий"
     print(f"\nАнализ: {vac['file']} — {vac['title']}")
     print(f"Ожидание: {expect} match")
-    print("Модель думает... (1-5 минут на CPU — это нормально)")
+    print("Модель думает...")
 
     t0 = time.time()
     report = analyze(vac["text"], kb)
