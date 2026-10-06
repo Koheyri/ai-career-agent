@@ -3,8 +3,7 @@ company: NVI Solutions LLC
 url: [<ссылка на hh.ru>](https://hh.ru/vacancy/137120112?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)
 type: pm 
 date: 30.09.2026
-Текст вакансии
-<сюда целиком скопируй текст вакансии с hh.ru,включая раздел «Ключевые навыки», если есть>Junior Product Manager / Product Analyst
+Текст вакансии:
 от 120 000 до 150 000 ₽ за месяц на руки
 Выплаты: два раза в месяц
 
@@ -20,9 +19,6 @@ date: 30.09.2026
 Сейчас эту вакансию смотрят 3 человека
 
 NVI Solutions LLC
-NVI Solutions LLC
-4,2
-70 отзывов
 IT-компания
 У работодателя есть аккредитация
 🏢О нас — Группа компаний NVI:
