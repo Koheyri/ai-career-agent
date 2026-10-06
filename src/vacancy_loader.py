@@ -1,4 +1,10 @@
-"""Загрузчик тестовых вакансий из data/vacancies/*.md."""
+"""Загрузчик тестовых вакансий из data/vacancies/*.md.
+
+Парсер терпим к ручному вводу:
+- решётки # в заголовках опциональны
+- маркер пункта: - – — • * или без него
+- разделитель "Текст вакансии" с # или без
+"""
 
 import re
 from pathlib import Path
@@ -10,15 +16,22 @@ VALID_TYPES = {"ba", "sa", "pm", "negative"}
 
 
 def parse_vacancy(raw: str) -> dict:
-    """Разбирает текст одного md-файла на поля."""
-    m = re.search(r"^#\s+(.+)$", raw, re.MULTILINE)
+    # Заголовок: "Вакансия 01: ..." — с # или без
+    m = re.search(r"^#*\s*(Вакансия[^\n]*)$", raw, re.MULTILINE)
     title = m.group(1).strip() if m else "—"
 
     def field(name: str) -> str:
-        fm = re.search(rf"^-\s*{name}:\s*(.+)$", raw, re.MULTILINE)
+        # ловит "-type: ba", "– type: ba", "*type: ba", "type: ba"
+        fm = re.search(
+            rf"^[^\w\n]*{name}\s*:\s*(.+)$",
+            raw, re.MULTILINE | re.IGNORECASE,
+        )
         return fm.group(1).strip() if fm else ""
 
-    parts = re.split(r"##\s*Текст вакансии\s*", raw, maxsplit=1)
+    # Текст: всё после строки-разделителя "Текст вакансии"
+    parts = re.split(
+        r"^#*\s*Текст вакансии\s*:?\s*$", raw, maxsplit=1, flags=re.MULTILINE
+    )
     text = parts[1].strip() if len(parts) == 2 else ""
 
     return {
@@ -32,7 +45,6 @@ def parse_vacancy(raw: str) -> dict:
 
 
 def load_vacancies() -> list[dict]:
-    """Читает все .md из data/vacancies и возвращает список словарей."""
     if not VACANCIES_DIR.exists():
         raise FileNotFoundError(f"Нет папки: {VACANCIES_DIR}")
 
@@ -45,13 +57,14 @@ def load_vacancies() -> list[dict]:
 
 
 def validate(vacancies: list[dict]) -> list[str]:
-    """Проверка набора: возвращает список проблем."""
     problems = []
     for v in vacancies:
         if v["type"] not in VALID_TYPES:
             problems.append(f"{v['file']}: неизвестный type='{v['type']}'")
         if len(v["text"]) < 200:
-            problems.append(f"{v['file']}: текст короче 200 символов — вероятно, не скопировался")
+            problems.append(
+                f"{v['file']}: текст {len(v['text'])} симв. (<200) — скопирован не целиком?"
+            )
     return problems
 
 
@@ -69,7 +82,7 @@ if __name__ == "__main__":
 
     problems = validate(vacs)
     if problems:
-        print("\nПРОБЛЕМЫ:")
+        print(f"\nПРОБЛЕМЫ ({len(problems)}):")
         for p in problems:
             print(f"  ⚠ {p}")
     else:
