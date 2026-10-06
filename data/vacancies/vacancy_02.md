@@ -1,9 +1,9 @@
-Вакансия 02: Fullstack-аналитик (в сфере логистики)
-company: ООО А2 Экспресс
-url: [<ссылка на hh.ru>](https://hh.ru/vacancy/137767657?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)
-type: ba 
-date: 30.09.2026
-Текст вакансии
+Вакансия 02:Fullstack-аналитик (в сфере логистики)
+company:ООО А2 Экспресс
+url:[<ссылка на hh.ru>](https://hh.ru/vacancy/137767657?query=%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA&hhtmFrom=vacancy_search_list)
+type:ba 
+date:30.09.2026
+Текст вакансии:
 Fullstack-аналитик (в сфере логистики)
 от 150 000 до 200 000 ₽ за месяц на руки
 Выплаты: два раза в месяц
