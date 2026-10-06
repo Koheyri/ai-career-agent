@@ -12,7 +12,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent.parent
 VACANCIES_DIR = BASE_DIR / "data" / "vacancies"
 
-VALID_TYPES = {"ba", "sa", "pm", "negative"}
+VALID_TYPES = {"ba", "sa", "pm", "stretch", "negative"}
 
 
 def parse_vacancy(raw: str) -> dict:
