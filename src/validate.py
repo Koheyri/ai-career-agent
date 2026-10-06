@@ -29,7 +29,7 @@ def main():
     print(f"\nПрогон {len(vacs)} вакансий. Ожидай ~15 сек на каждую.\n")
 
     for i, vac in enumerate(vacs, start=1):
-        expect_high = vac["type"] != "negative"
+        expect_high = vac["type"] in ("ba", "sa", "pm")
         t0 = time.time()
         report = analyze(vac["text"], kb)
         dt = round(time.time() - t0)
