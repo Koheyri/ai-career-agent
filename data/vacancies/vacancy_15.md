@@ -1,6 +1,6 @@
 Вакансия 15: Продуктовый аналитик
 company: Sunlight
-type:  negative 
+type:  ba 
 date: 30.09.2026
 Текст вакансии
 
